@@ -19,6 +19,7 @@ module.exports = (req, res, next) => {
       if (result && result.length > 0) {
         const user = result[0];
         if (bcrypt.compareSync(password, user.password)) {
+          delete user.password;
           req.user = user;
           next();
         } else return res.status(401).json({ error: "Invalid credentials" });
