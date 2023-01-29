@@ -1,2 +1,3 @@
-// setup project
-// blah
+const db = require("./src/config/db");
+
+db.initDatabase();
