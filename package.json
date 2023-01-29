@@ -1,0 +1,19 @@
+{
+  "name": "webapp",
+  "version": "1.0.0",
+  "description": "Northeastern University CSYE 6225 Assignments",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karanwadhwa/webapp.git"
+  },
+  "author": "Karan Wadhwa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/karanwadhwa/webapp/issues"
+  },
+  "homepage": "https://github.com/karanwadhwa/webapp#readme"
+}
