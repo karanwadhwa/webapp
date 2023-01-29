@@ -3,17 +3,21 @@ const { check, validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 
 const { dbconn } = require("../config/db");
+const authMiddleware = require("../config/authMiddleware");
 
 const router = express.Router();
 
 // @route   GET /v1/user/
 // @desc    NOT IMPLEMENTED
-// @access  Public
-router.get("/", (req, res) => {
+// @access  Private
+router.get("/", authMiddleware, (req, res) => {
   console.log(req.body);
   return res.sendStatus(501);
 });
 
+// @route   POST /v1/user/
+// @desc    Create new user
+// @access  Public
 router.post(
   "/",
   check("first_name", "first_name is a required field").not().isEmpty(),
@@ -23,7 +27,6 @@ router.post(
   check("password", "password needs to be 6 characters or longer").isLength({ min: 6 }),
   (req, res) => {
     const validationErrors = validationResult(req);
-    console.log(validationErrors);
     if (!validationErrors.isEmpty())
       return res.status(400).json({ errors: validationErrors.array() });
 
@@ -57,7 +60,7 @@ router.post(
               else if (err) throw err;
               // return saved user
               if (result && result.length > 1) {
-                let user = result[1];
+                let user = result[1][0];
                 delete user.password;
                 return res.status(201).json({ user });
               }
@@ -71,5 +74,15 @@ router.post(
     }
   }
 );
+
+// @route   GET /v1/user/:userId
+// @desc    Get User details
+// @access  Private
+router.get("/:userId", authMiddleware, (req, res) => {
+  // == because params.userId is a string
+  if (req.user.id == req.params.userId) return res.status(200).json({ user: req.user });
+
+  return res.status(403).json({ error: "You do not have access to this data" });
+});
 
 module.exports = router;
