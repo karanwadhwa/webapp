@@ -18,6 +18,7 @@ router.get("/", authMiddleware, (req, res) => {
 // @route   POST /v1/user/
 // @desc    Create new user
 // @access  Public
+// @response codes  201, 400
 router.post(
   "/",
   check("first_name", "first_name is a required field").not().isEmpty(),
@@ -78,11 +79,51 @@ router.post(
 // @route   GET /v1/user/:userId
 // @desc    Get User details
 // @access  Private
+// @response codes  200, 401, 403
 router.get("/:userId", authMiddleware, (req, res) => {
-  // == because params.userId is a string
-  if (req.user.id == req.params.userId) return res.status(200).json({ user: req.user });
+  if (req.user.id === parseInt(req.params.userId)) return res.status(200).json({ user: req.user });
 
   return res.status(403).json({ error: "You do not have access to this data" });
 });
+
+// @route   PUT /v1/user/:userId
+// @desc    Update User details
+// @access  Private
+// @response codes  204, 400, 401, 403
+router.put(
+  "/:userId",
+  authMiddleware,
+  check("first_name", "first_name is a required field").not().isEmpty(),
+  check("last_name", "last_name is a required field").not().isEmpty(),
+  check("username", "username should be a valid email address").isEmail(),
+  check("password", "password is a required field").not().isEmpty(),
+  check("password", "password needs to be 6 characters or longer").isLength({ min: 6 }),
+  (req, res) => {
+    const { username, password, first_name, last_name } = req.body;
+    if (req.user.id !== parseInt(req.params.userId) || req.user.username !== username)
+      return res.status(403).json({ error: "You do not have access to this data" });
+
+    const validationErrors = validationResult(req);
+    if (!validationErrors.isEmpty())
+      return res.status(400).json({ errors: validationErrors.array() });
+
+    const queryString = `UPDATE users \
+    SET first_name = ?, last_name = ?, password = ?, account_updated = ?\
+    WHERE username = ?;`;
+
+    // encrypt password
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+
+    dbconn.query(
+      queryString,
+      [first_name, last_name, hash, new Date(), username],
+      (err, result) => {
+        if (err) throw err;
+        if (result) return res.sendStatus(204);
+      }
+    );
+  }
+);
 
 module.exports = router;
