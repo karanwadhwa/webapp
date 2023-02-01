@@ -100,8 +100,11 @@ router.put(
   check("password", "password needs to be 6 characters or longer").isLength({ min: 6 }),
   (req, res) => {
     const { username, password, first_name, last_name } = req.body;
-    if (req.user.id !== parseInt(req.params.userId) || req.user.username !== username)
+    if (req.user.id !== parseInt(req.params.userId))
       return res.status(403).json({ error: "You do not have access to this data" });
+
+    if (req.user.username !== username)
+      return res.status(400).json({ error: "Incorrect username" });
 
     const validationErrors = validationResult(req);
     if (!validationErrors.isEmpty())
