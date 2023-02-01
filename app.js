@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 
 const app = express();
@@ -9,8 +10,5 @@ app.use(express.json({ extended: true }));
 app.get("/healthz", (req, res) => {
   res.sendStatus(200);
 });
-
-// Route definitions
-app.use("/v1/user", require("./src/routes/user"));
 
 module.exports = app;

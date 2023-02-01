@@ -1,6 +1,6 @@
 const app = require("./app");
 const request = require("supertest");
-jest.useFakeTimers();
+// jest.useFakeTimers();
 
 describe("/healthz endpoint", () => {
   test("should always respond with a 200 status code", async () => {
