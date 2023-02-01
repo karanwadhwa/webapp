@@ -4,7 +4,7 @@
   "description": "Northeastern University CSYE 6225 Assignments",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --forceExit",
     "setup": "node setup.js",
     "start": "node server.js"
   },
@@ -18,6 +18,9 @@
     "url": "https://github.com/karanwadhwa/webapp/issues"
   },
   "homepage": "https://github.com/karanwadhwa/webapp#readme",
+  "jest": {
+    "testPathIgnorePatterns": ["/node_modules/"]
+  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.0.3",
