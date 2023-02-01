@@ -8,7 +8,7 @@ app.use(express.json({ extended: true }));
 
 // Health check route
 app.get("/healthz", (req, res) => {
-  return res.sendStatus(500);
+  return res.sendStatus(200);
 });
 
 module.exports = app;
