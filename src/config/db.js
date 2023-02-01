@@ -9,27 +9,8 @@ const dbConfig = {
   multipleStatements: true,
 };
 
-let dbconn;
-
-async function handleDisconnect() {
-  // Create DB Connection
-  dbconn = await mysql.createConnection(dbConfig);
-
-  dbconn.connect((err) => {
-    if (err) {
-      console.log("Error when connecting to db:", err);
-      setTimeout(handleDisconnect, 2000);
-    }
-  });
-
-  dbconn.on("error", (err) => {
-    console.log("db error", err);
-    if (err.code === "PROTOCOL_CONNECTION_LOST") handleDisconnect();
-    else throw err;
-  });
-}
-
-handleDisconnect();
+// Create DB Connection
+const dbconn = mysql.createConnection(dbConfig);
 
 // initialize database for project setup
 const initDatabase = () => {
