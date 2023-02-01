@@ -12,7 +12,7 @@ NUID: 002663034
 $ npm install
 ```
 
-2. Create `.env` file from `.env.example` template.
+2. Create `.env` file from `.env.example` template
 3. Install MySQL and create an empty database as defined in `.env`
 4. Run setup script to initialize database tables
 
