@@ -24,7 +24,8 @@ module.exports = (req, res, next) => {
           next();
         } else return res.status(401).json({ error: "Invalid credentials" });
       } else {
-        return res.status(400).json({ error: "User does not exist" });
+        return res.status(401).json({ error: "Invalid credentials" });
+        // return res.status(400).json({ error: "User does not exist" });
       }
     });
   } catch (err) {
