@@ -1,6 +1,5 @@
 const app = require("./app");
 const request = require("supertest");
-
 // jest.useFakeTimers();
 
 describe("/healthz endpoint", () => {
