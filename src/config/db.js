@@ -1,19 +1,35 @@
 require("dotenv").config();
 const mysql = require("mysql2");
 
-const DB_HOST = process.env.DB_HOST;
-const DB_USER = process.env.DB_USER;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_DATABASE = process.env.DB_DATABASE;
-
-// Create DB Connection
-const dbconn = mysql.createConnection({
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_DATABASE,
+const dbConfig = {
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   multipleStatements: true,
-});
+};
+
+let dbconn;
+
+async function handleDisconnect() {
+  // Create DB Connection
+  dbconn = await mysql.createConnection(dbConfig);
+
+  dbconn.connect((err) => {
+    if (err) {
+      console.log("Error when connecting to db:", err);
+      setTimeout(handleDisconnect, 2000);
+    }
+  });
+
+  dbconn.on("error", (err) => {
+    console.log("db error", err);
+    if (err.code === "PROTOCOL_CONNECTION_LOST") handleDisconnect();
+    else throw err;
+  });
+}
+
+handleDisconnect();
 
 // initialize database for project setup
 const initDatabase = () => {
