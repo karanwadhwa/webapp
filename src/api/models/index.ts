@@ -1,7 +1,7 @@
-import { Sequelize } from "sequelize";
+import { Model, Sequelize } from "sequelize";
 import mysql from "mysql2";
 import dotenv from "dotenv";
-import User from "./UserModel";
+import UserModel, { attributes as userAttributes, options as userOptions } from "./UserModel";
 dotenv.config();
 
 const DB_DATABASE = process.env.DB_DATABASE;
@@ -14,12 +14,6 @@ const dbConfig = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
 };
-
-interface dbInterface {
-  User: (s: Sequelize) => Sequelize;
-}
-
-let db: dbInterface;
 
 export async function initializeDatabase() {
   // Create Database if it doesnt already exist
@@ -34,12 +28,8 @@ export async function initializeDatabase() {
       dialect: "mysql",
     });
 
-    db = {
-      User: User(sequelize),
-    };
+    UserModel.init(userAttributes, { ...userOptions, sequelize });
 
     return sequelize.sync({ alter: true });
   });
 }
-
-export default db;
