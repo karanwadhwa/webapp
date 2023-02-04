@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Northeastern University CSYE 6225 Assignments",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "jest",
     "setup": "node setup.js",
