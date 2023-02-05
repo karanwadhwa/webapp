@@ -11,9 +11,13 @@ interface UserParams {
 class UserService {
   constructor() {}
 
-  findByUsername = async (username: string): Promise<UserModel> => {
-    const user = await UserModel.findOne({ where: { username } });
-    return user;
+  findByUsername = async (username: string, includePassword = false) => {
+    const attributes = includePassword ? { include: ["password"] } : { exclude: ["password"] };
+
+    return await UserModel.findOne({
+      where: { username },
+      attributes,
+    });
   };
 
   create = async (params: UserParams): Promise<UserModel> => {
