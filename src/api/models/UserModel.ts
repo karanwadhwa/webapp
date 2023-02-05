@@ -1,14 +1,26 @@
 import {
   CreationOptional,
   DataTypes,
+  HasManyAddAssociationMixin,
+  HasManyAddAssociationsMixin,
+  HasManyCountAssociationsMixin,
+  HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
+  HasManyHasAssociationMixin,
+  HasManyHasAssociationsMixin,
+  HasManyRemoveAssociationMixin,
+  HasManyRemoveAssociationsMixin,
+  HasManySetAssociationsMixin,
   InferAttributes,
   InferCreationAttributes,
   Model,
+  NonAttribute,
 } from "sequelize";
+import ProductModel from "./ProductModel";
 
 export default class UserModel extends Model<
-  InferAttributes<UserModel>,
-  InferCreationAttributes<UserModel>
+  InferAttributes<UserModel, { omit: "products" }>,
+  InferCreationAttributes<UserModel, { omit: "products" }>
 > {
   // id can be undefined during creation when using `autoIncrement`
   declare id: CreationOptional<number>;
@@ -20,6 +32,24 @@ export default class UserModel extends Model<
   // createdAt can be undefined during creation
   declare account_created: CreationOptional<Date>;
   declare account_updated: CreationOptional<Date>;
+
+  // Since TS cannot determine model association at compile time
+  // we have to declare them here purely virtually
+  // these will not exist until `Model.init` was called.
+  declare getProducts: HasManyGetAssociationsMixin<ProductModel>; // Note the null assertions!
+  declare addProduct: HasManyAddAssociationMixin<ProductModel, number>;
+  declare addProducts: HasManyAddAssociationsMixin<ProductModel, number>;
+  declare setProducts: HasManySetAssociationsMixin<ProductModel, number>;
+  declare removeProduct: HasManyRemoveAssociationMixin<ProductModel, number>;
+  declare removeProducts: HasManyRemoveAssociationsMixin<ProductModel, number>;
+  declare hasProduct: HasManyHasAssociationMixin<ProductModel, number>;
+  declare hasProducts: HasManyHasAssociationsMixin<ProductModel, number>;
+  declare countProducts: HasManyCountAssociationsMixin;
+  declare createProduct: HasManyCreateAssociationMixin<ProductModel, "owner_user_id">;
+
+  // You can also pre-declare possible inclusions, these will only be populated if you
+  // actively include a relation.
+  declare products?: NonAttribute<ProductModel[]>; // Note this is optional since it's only populated when explicitly requested in code
 }
 
 export const attributes = {
