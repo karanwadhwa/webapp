@@ -24,6 +24,32 @@ router.post(
 // @response codes  200, 404
 router.get("/:productId", controller.getProduct);
 
+// @route   PUT /v1/product/:productId
+// @desc    Update product
+// @access  Private
+// @response codes  204, 400, 401, 403
+router.put(
+  "/:productId",
+  AuthMiddleware,
+  check("productId", "Enter a valid product id").not().isEmpty(),
+  check("quantity", "Enter a valid quantity value between 0 and 100").isInt({ min: 0, max: 100 }),
+  controller.checkValidationErrors,
+  controller.updateProduct
+);
+
+// @route   PATCH /v1/product/:productId
+// @desc    Update product
+// @access  Private
+// @response codes  204, 400, 401, 403
+router.patch(
+  "/:productId",
+  AuthMiddleware,
+  check("productId", "Enter a valid product id").not().isEmpty(),
+  check("quantity", "Enter a valid quantity value between 0 and 100").isInt({ min: 0, max: 100 }),
+  controller.checkValidationErrors,
+  controller.updateProduct
+);
+
 // @route   DELETE /v1/product/:productId
 // @desc    Delete product
 // @access  Private

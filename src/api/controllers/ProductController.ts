@@ -13,6 +13,13 @@ class ProductController extends RootController {
     super();
   }
 
+  getProduct = async (req: express.Request, res: express.Response): Promise<express.Response> => {
+    const product = await productService.findById(parseInt(req.params.productId));
+    if (product) return res.status(200).json({ ...product.toJSON() });
+
+    return res.sendStatus(404);
+  };
+
   createProduct = async (
     req: RequestUserAuth,
     res: express.Response
@@ -23,11 +30,19 @@ class ProductController extends RootController {
     return res.status(201).json({ ...product.toJSON() });
   };
 
-  getProduct = async (req: express.Request, res: express.Response): Promise<express.Response> => {
-    const product = await productService.findById(parseInt(req.params.productId));
-    if (product) return res.status(200).json({ ...product.toJSON() });
+  updateProduct = async (
+    req: RequestUserAuth,
+    res: express.Response
+  ): Promise<express.Response> => {
+    const productId = parseInt(req.params.productId);
+    const product = await productService.findById(productId);
+    if (!product) return res.sendStatus(404);
+    if (product.owner_user_id !== req.user.id)
+      return res.status(403).json({ error: "You do not have access to this data" });
 
-    return res.sendStatus(404);
+    const updated = await productService.update(req.body, productId);
+    console.log(updated);
+    return res.sendStatus(204);
   };
 
   deleteProduct = async (
