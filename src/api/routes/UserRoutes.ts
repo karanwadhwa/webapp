@@ -1,6 +1,7 @@
 import * as express from "express";
 import { check } from "express-validator";
 import UserController from "../controllers/UserController";
+import AuthMiddleware from "../middlewares/AuthMiddleware";
 
 const router = express.Router();
 const controller = new UserController();
@@ -25,5 +26,11 @@ router.post(
   check("password", "password needs to be 6 characters or longer").isLength({ min: 6 }),
   controller.createUser
 );
+
+// @route   GET /v1/user/:userId
+// @desc    Get User details
+// @access  Private
+// @response codes  200, 401, 403
+router.get("/:userId", AuthMiddleware, controller.getUserProfile);
 
 export default router;
