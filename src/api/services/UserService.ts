@@ -20,6 +20,10 @@ class UserService {
     });
   };
 
+  findById = async (id: number) => {
+    return await UserModel.findByPk(id);
+  };
+
   create = async (params: UserParams): Promise<UserModel> => {
     const { username, password, first_name, last_name } = params;
 
