@@ -23,6 +23,17 @@ class ProductService {
     return product;
   };
 
+  update = async (params: ProductParams, id: number) => {
+    const { name, description, sku, manufacturer, quantity } = params;
+
+    const product = await ProductModel.update(
+      { name, description, sku, manufacturer, quantity },
+      { where: { id } }
+    );
+
+    return product;
+  };
+
   delete = async (id: number) => {
     return await ProductModel.destroy({ where: { id } });
   };
