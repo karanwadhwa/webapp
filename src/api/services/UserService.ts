@@ -31,6 +31,18 @@ class UserService {
     delete user.password;
     return user;
   };
+
+  updateUser = async (params: UserParams, userId: number) => {
+    // encrypt password
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(params.password, salt);
+
+    let user = await UserModel.update(
+      { first_name: params.first_name, last_name: params.last_name, password: hash },
+      { where: { id: userId } }
+    );
+    return user;
+  };
 }
 
 export default UserService;
