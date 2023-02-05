@@ -29,6 +29,21 @@ class ProductController extends RootController {
 
     return res.sendStatus(404);
   };
+
+  deleteProduct = async (
+    req: RequestUserAuth,
+    res: express.Response
+  ): Promise<express.Response> => {
+    const productId = parseInt(req.params.productId);
+    const product = await productService.findById(productId);
+    if (!product) return res.sendStatus(404);
+    if (product.owner_user_id !== req.user.id)
+      return res.status(403).json({ error: "You do not have access to this data" });
+
+    const deleted = await productService.delete(productId);
+    console.log(deleted);
+    return res.sendStatus(204);
+  };
 }
 
 export default ProductController;

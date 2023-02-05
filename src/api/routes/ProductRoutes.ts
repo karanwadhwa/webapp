@@ -24,4 +24,16 @@ router.post(
 // @response codes  200, 404
 router.get("/:productId", controller.getProduct);
 
+// @route   DELETE /v1/product/:productId
+// @desc    Delete product
+// @access  Private
+// @response codes  204, 400, 401, 403, 404
+router.delete(
+  "/:productId",
+  AuthMiddleware,
+  check("productId", "Enter a valid product id").not().isEmpty(),
+  controller.checkValidationErrors,
+  controller.deleteProduct
+);
+
 export default router;

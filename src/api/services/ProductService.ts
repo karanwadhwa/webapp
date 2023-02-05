@@ -22,6 +22,10 @@ class ProductService {
     const product = user.createProduct({ name, description, sku, manufacturer, quantity });
     return product;
   };
+
+  delete = async (id: number) => {
+    return await ProductModel.destroy({ where: { id } });
+  };
 }
 
 export default ProductService;
