@@ -13,6 +13,10 @@ const controller = new ProductController();
 router.post(
   "/",
   AuthMiddleware,
+  check("name", "name is a required field").not().isEmpty(),
+  check("description", "description is a required field").not().isEmpty(),
+  check("sku", "sku is a required field").not().isEmpty(),
+  check("manufacturer", "manufacturer is a required field").not().isEmpty(),
   check("quantity", "Enter a valid quantity value between 0 and 100").isInt({ min: 0, max: 100 }),
   controller.checkValidationErrors,
   controller.createProduct
@@ -31,6 +35,10 @@ router.get("/:productId", controller.getProduct);
 router.put(
   "/:productId",
   AuthMiddleware,
+  check("name", "name is a required field").not().isEmpty(),
+  check("description", "description is a required field").not().isEmpty(),
+  check("sku", "sku is a required field").not().isEmpty(),
+  check("manufacturer", "manufacturer is a required field").not().isEmpty(),
   check("productId", "Enter a valid product id").not().isEmpty(),
   check("quantity", "Enter a valid quantity value between 0 and 100").isInt({ min: 0, max: 100 }),
   controller.checkValidationErrors,
@@ -45,7 +53,6 @@ router.patch(
   "/:productId",
   AuthMiddleware,
   check("productId", "Enter a valid product id").not().isEmpty(),
-  check("quantity", "Enter a valid quantity value between 0 and 100").isInt({ min: 0, max: 100 }),
   controller.checkValidationErrors,
   controller.updateProduct
 );
