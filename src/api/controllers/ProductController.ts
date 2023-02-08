@@ -24,25 +24,40 @@ class ProductController extends RootController {
     req: RequestUserAuth,
     res: express.Response
   ): Promise<express.Response> => {
-    const user = await userService.findById(req.user.id);
-    const product = await productService.create(user, req.body);
+    try {
+      const user = await userService.findById(req.user.id);
+      let existing = await productService.findBySKU(req.body.sku);
+      if (existing) return res.status(400).json({ error: "SKU must be unique" });
 
-    return res.status(201).json({ ...product.toJSON() });
+      const product = await productService.create(user, req.body);
+
+      return res.status(201).json({ ...product.toJSON() });
+    } catch (error) {
+      console.log(error);
+      if (error.errors) return res.status(400).json({ errors: error.errors });
+      else return res.sendStatus(400);
+    }
   };
 
   updateProduct = async (
     req: RequestUserAuth,
     res: express.Response
   ): Promise<express.Response> => {
-    const productId = parseInt(req.params.productId);
-    const product = await productService.findById(productId);
-    if (!product) return res.sendStatus(404);
-    if (product.owner_user_id !== req.user.id)
-      return res.status(403).json({ error: "You do not have access to this data" });
+    try {
+      const productId = parseInt(req.params.productId);
+      const product = await productService.findById(productId);
+      if (!product) return res.sendStatus(404);
+      if (product.owner_user_id !== req.user.id)
+        return res.status(403).json({ error: "You do not have access to this data" });
 
-    const updated = await productService.update(req.body, productId);
-    console.log(updated);
-    return res.sendStatus(204);
+      const updated = await productService.update(req.body, productId);
+      console.log(updated);
+      return res.sendStatus(204);
+    } catch (error) {
+      console.log(error);
+      if (error.errors) return res.status(400).json({ errors: error.errors });
+      else return res.sendStatus(400);
+    }
   };
 
   deleteProduct = async (
