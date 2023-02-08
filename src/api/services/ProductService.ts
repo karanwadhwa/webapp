@@ -16,18 +16,26 @@ class ProductService {
     return await ProductModel.findByPk(id);
   };
 
-  create = async (user: UserModel, params: ProductParams) => {
-    const { name, description, sku, manufacturer, quantity } = params;
+  findBySKU = async (sku: string) => {
+    return await ProductModel.findOne({ where: { sku } });
+  };
 
-    const product = user.createProduct({ name, description, sku, manufacturer, quantity });
-    return product;
+  create = async (user: UserModel, params: ProductParams) => {
+    try {
+      const { name, description, sku, manufacturer, quantity } = params;
+
+      const product = user.createProduct({ name, description, sku, manufacturer, quantity });
+      return product;
+    } catch (error) {
+      throw error;
+    }
   };
 
   update = async (params: ProductParams, id: number) => {
-    const { name, description, sku, manufacturer, quantity } = params;
+    const { name, description, manufacturer, quantity } = params;
 
     const product = await ProductModel.update(
-      { name, description, sku, manufacturer, quantity },
+      { name, description, manufacturer, quantity },
       { where: { id } }
     );
 
