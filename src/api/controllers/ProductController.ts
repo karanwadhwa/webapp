@@ -50,6 +50,18 @@ class ProductController extends RootController {
       if (product.owner_user_id !== req.user.id)
         return res.status(403).json({ error: "You do not have access to this data" });
 
+      let existing = null;
+      if (req.body.sku) existing = await productService.findBySKU(req.body.sku);
+      if (!!existing) {
+        let currentProd = await productService.findById(productId);
+        currentProd = currentProd.toJSON();
+        existing = existing.toJSON();
+        if (existing.id !== currentProd.id)
+          return res
+            .status(400)
+            .json({ error: `A product with SKU: '${req.body.sku}' already exists.` });
+      }
+
       const updated = await productService.update(req.body, productId);
       console.log(updated);
       return res.sendStatus(204);

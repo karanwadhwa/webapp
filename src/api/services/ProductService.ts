@@ -32,10 +32,10 @@ class ProductService {
   };
 
   update = async (params: ProductParams, id: number) => {
-    const { name, description, manufacturer, quantity } = params;
+    const { name, description, sku, manufacturer, quantity } = params;
 
     const product = await ProductModel.update(
-      { name, description, manufacturer, quantity },
+      { name, description, sku, manufacturer, quantity },
       { where: { id } }
     );
 
