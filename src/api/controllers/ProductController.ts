@@ -13,7 +13,10 @@ class ProductController extends RootController {
     super();
   }
 
-  getProduct = async (req: express.Request, res: express.Response): Promise<express.Response> => {
+  getProduct = async (
+    req: express.Request,
+    res: express.Response
+  ): Promise<express.Response> => {
     const product = await productService.findById(parseInt(req.params.productId));
     if (product) return res.status(200).json({ ...product.toJSON() });
 
@@ -28,6 +31,11 @@ class ProductController extends RootController {
       const user = await userService.findById(req.user.id);
       let existing = await productService.findBySKU(req.body.sku);
       if (existing) return res.status(400).json({ error: "SKU must be unique" });
+
+      if (req.body.quantity && typeof req.body.quantity !== "number")
+        return res
+          .status(400)
+          .json({ error: "Quantity must be an integer value between 0 and 100" });
 
       const product = await productService.create(user, req.body);
 
@@ -44,6 +52,11 @@ class ProductController extends RootController {
     res: express.Response
   ): Promise<express.Response> => {
     try {
+      if (req.body.quantity && typeof req.body.quantity !== "number")
+        return res
+          .status(400)
+          .json({ error: "Quantity must be an integer value between 0 and 100" });
+
       const productId = parseInt(req.params.productId);
       const product = await productService.findById(productId);
       if (!product) return res.sendStatus(404);
