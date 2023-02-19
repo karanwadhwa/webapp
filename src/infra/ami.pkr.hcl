@@ -70,7 +70,7 @@ build {
   sources = ["source.amazon-ebs.assignment4"]
 
   provisioner "file" {
-    source      = "../../../../webapp.zip"
+    source      = "../../webapp.zip"
     destination = "/home/ec2-user/webapp.zip"
   }
 
