@@ -37,10 +37,15 @@ jobs:
       id: validate
       run: "packer validate ./src/infra/ami.pkr.hcl"
 
+    # - name: Create Release folder
+    #   run: rsync -arv --exclude='.git/' --exclude='.github/' --exclude='.gitignore' --exclude='src/infra/' --exclude='.env.example' . ./release
+    # - name: Switch to release folder
+    #   run: cd release && ls -la
+
     - name: Zip file
       uses: montudor/action-zip@v1
       with:
-        args: zip -qq -r /home/runner/work/webapp/webapp.zip /home/runner/work/webapp/webapp
+        args: zip -r webapp.zip
 
     - name: Run `packer build`
       id: build
