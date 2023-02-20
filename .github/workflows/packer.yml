@@ -23,10 +23,13 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
 
+    - name: Copy all files
+      run: rsync -arv --exclude='.git/' --exclude='.github/' --exclude='.gitignore' . ./webapp
+
     - name: Zip file
       uses: montudor/action-zip@v1
       with:
-        args: zip -r webapp.zip *
+        args: zip -r webapp.zip webapp/
       
     - name: Setup `packer`
       uses: hashicorp/setup-packer@main
