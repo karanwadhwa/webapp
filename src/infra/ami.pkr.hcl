@@ -12,6 +12,14 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
+variable "aws_access_key_id" {
+  type = string
+}
+
+variable "aws_secret_access_key" {
+  type = string
+}
+
 // variable "source_ami" {
 //   type    = string
 //   default = "ami-08c40ec9ead489470" # Ubuntu 22.04 LTS
@@ -29,8 +37,9 @@ variable "subnet_id" {
 
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "assignment4" {
-  region          = "${var.aws_region}"
-  profile         = "dev"
+  region          = var.aws_region
+  access_key      = var.aws_access_key_id
+  secret_key      = var.aws_secret_access_key
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
   ami_regions = [
@@ -68,7 +77,7 @@ source "amazon-ebs" "assignment4" {
 
 build {
   sources = ["source.amazon-ebs.assignment4"]
-  
+
   provisioner "file" {
     source      = "./webapp.service"
     destination = "/tmp/webapp.service"
