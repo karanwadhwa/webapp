@@ -45,7 +45,7 @@ jobs:
 
       - name: Run `packer validate`
         id: validate
-        run: "cd src/infra/ && packer validate ami.pkr.hcl -var='aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'"
+        run: "cd src/infra/ && packer validate ami.pkr.hcl -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'"
 
       # - name: Create Release folder
       #   run: rsync -arv --exclude='.git/' --exclude='.github/' --exclude='.gitignore' --exclude='src/infra/' --exclude='.env.example' . ./release
@@ -54,4 +54,4 @@ jobs:
 
       - name: Run `packer build`
         id: build
-        run: "cd src/infra/ && packer build ami.pkr.hcl -var='aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' -var='aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'"
+        run: "cd src/infra/ && packer build ami.pkr.hcl -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'"
