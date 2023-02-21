@@ -68,16 +68,17 @@ source "amazon-ebs" "assignment4" {
 
 build {
   sources = ["source.amazon-ebs.assignment4"]
+  
+  provisioner "file" {
+    source      = "./webapp.service"
+    destination = "/tmp/webapp.service"
+  }
 
   provisioner "file" {
     source      = "../../webapp.zip"
     destination = "/home/ec2-user/webapp.zip"
   }
 
-  provisioner "file" {
-    source      = "./webapp.service"
-    destination = "/tmp/webapp.service"
-  }
 
   provisioner "shell" {
     environment_vars = [
