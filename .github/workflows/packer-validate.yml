@@ -45,4 +45,10 @@ jobs:
 
       - name: Run `packer validate`
         id: validate
-        run: "cd src/infra/ && packer validate -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' ami.pkr.hcl"
+        run: >
+          cd src/infra/ &&
+          packer validate -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}'
+          -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          -var 'db_password=${{ secrets.DB_PASSWORD }}'
+          -var 'ami_users=${{ secrets.AMI_USERS}}'
+          ami.pkr.hcl
