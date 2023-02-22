@@ -1,7 +1,7 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
-name: Node.js CI
+name: Packer validate CI
 
 on:
   push:
@@ -46,11 +46,6 @@ jobs:
       - name: Run `packer validate`
         id: validate
         run: "cd src/infra/ && packer validate -var 'aws_access_key_id=${{ secrets.AWS_ACCESS_KEY_ID }}' -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}' ami.pkr.hcl"
-
-      # - name: Create Release folder
-      #   run: rsync -arv --exclude='.git/' --exclude='.github/' --exclude='.gitignore' --exclude='src/infra/' --exclude='.env.example' . ./release
-      # - name: Switch to release folder
-      #   run: cd release && ls -la
 
       - name: Run `packer build`
         id: build
