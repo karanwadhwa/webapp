@@ -20,6 +20,11 @@ variable "aws_secret_access_key" {
   type = string
 }
 
+variable "ami_users" {
+  type    = list(string)
+  default = []
+}
+
 // variable "source_ami" {
 //   type    = string
 //   default = "ami-08c40ec9ead489470" # Ubuntu 22.04 LTS
@@ -35,13 +40,19 @@ variable "subnet_id" {
   default = "subnet-0ebc8c671cd12fd32"
 }
 
+variable "db_password" {
+  type = string
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "assignment4" {
   region          = var.aws_region
+  profile         = "dev"
   access_key      = var.aws_access_key_id
   secret_key      = var.aws_secret_access_key
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
+  ami_users       = var.ami_users
   ami_regions = [
     var.aws_region
   ]
@@ -92,7 +103,8 @@ build {
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "CHECKPOINT_DISABLE=1"
+      "CHECKPOINT_DISABLE=1",
+      "DB_PASSWORD=${var.db_password}"
     ]
     script = "./app.sh"
   }

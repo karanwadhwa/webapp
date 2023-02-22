@@ -20,17 +20,17 @@ sudo systemctl enable --now mysqld
 systemctl status mysqld
 # sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF;}'
 ROOT_PASSWORD=$(sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF;}')
-# MYSQL_PASSWORD='Mysql@6225'
 echo "${ROOT_PASSWORD}"
-sudo mysql -u "root" --password="${ROOT_PASSWORD}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY 'Mysql@6225';"
+sudo mysql -u "root" --password="${ROOT_PASSWORD}" --connect-expired-password -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
 
 # copy and unzip repo
 sudo yum install unzip -y
 cd ~/ && unzip webapp.zip
 cd ~/webapp && npm install
 npm run build
-echo -e "API_PORT=3000\nDB_HOST=localhost\nDB_USER=root\nDB_PASSWORD=Mysql@6225\nDB_DATABASE=webapp6225" > .env
-
+echo "$DB_PASSWORD"
+echo -e "API_PORT=3000\nDB_HOST=localhost\nDB_USER=root\nDB_PASSWORD=$DB_PASSWORD\nDB_DATABASE=webapp6225" > .env
+cat .env
 
 # move systemd service file
 sudo mv /tmp/webapp.service /etc/systemd/system/webapp.service
