@@ -63,4 +63,5 @@ jobs:
           -var 'db_password=${{ secrets.DB_PASSWORD }}'
           -var 'ami_users=${{ secrets.AMI_USERS}}'
           -var 'aws_region=${{ vars.AWS_REGION }}'
+          -var 'subnet_id=${{ vars.DEFAULT_SUBNET_ID }}'
           ami.pkr.hcl
