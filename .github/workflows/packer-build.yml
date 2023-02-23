@@ -62,4 +62,5 @@ jobs:
           -var 'aws_secret_access_key=${{ secrets.AWS_SECRET_ACCESS_KEY }}'
           -var 'db_password=${{ secrets.DB_PASSWORD }}'
           -var 'ami_users=${{ secrets.AMI_USERS}}'
+          -var 'aws_region=${{ env.AWS_REGION }}'
           ami.pkr.hcl
