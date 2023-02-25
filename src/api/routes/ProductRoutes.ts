@@ -92,7 +92,7 @@ router.post(
 // @desc    Get a list of all uploaded images for the specified product
 // @access  Private
 // @response codes  200, 401, 403
-router.get("/:productId/image");
+router.get("/:productId/image", AuthMiddleware, controller.getProductImages);
 
 // @route   GET /v1/product/{productId}/image/{imageId}
 // @desc    Get Image details
