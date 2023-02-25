@@ -99,6 +99,27 @@ class ProductController extends RootController {
     console.log(deleted);
     return res.sendStatus(204);
   };
+
+  addProductImage = async (req, res: express.Response): Promise<express.Response> => {
+    try {
+      const file = req.file;
+      const productId = parseInt(req.params.productId);
+      const product = await productService.findById(productId);
+      if (!product) return res.status(404).json({ error: "Invalid product id" });
+      if (product.get("owner_user_id") !== req.user.id)
+        return res.status(403).json({ error: "You do not have access to this data" });
+
+      const imageData = await productService.saveImageData(productId, {
+        file_name: file.originalname,
+        s3_bucket_path: file.path,
+      });
+
+      return res.status(201).json({ ...imageData.toJSON() });
+    } catch (err) {
+      console.error(err);
+      return res.status(400).json({ err });
+    }
+  };
 }
 
 export default ProductController;
