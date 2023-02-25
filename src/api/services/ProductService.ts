@@ -59,14 +59,19 @@ class ProductService {
     return affectedCount;
   };
 
-  saveImageData = async (productId: number, params: ImageParams): Promise<ImageModel> => {
+  saveImageData = async (
+    product: ProductModel,
+    params: ImageParams
+  ): Promise<ImageModel> => {
     try {
-      const product = await ProductModel.findByPk(productId);
-      console.log(product);
       return product.createImage({ ...params });
     } catch (err) {
       throw err;
     }
+  };
+
+  findImageById = async (id: number): Promise<ImageModel> => {
+    return ImageModel.findByPk(id);
   };
 }
 

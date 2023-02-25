@@ -91,14 +91,14 @@ router.post(
 // @route   GET /v1/product/{productId}/image
 // @desc    Get a list of all uploaded images for the specified product
 // @access  Private
-// @response codes  200, 401, 403
+// @response codes  200, 401, 403, 404
 router.get("/:productId/image", AuthMiddleware, controller.getProductImages);
 
 // @route   GET /v1/product/{productId}/image/{imageId}
 // @desc    Get Image details
 // @access  Private
-// @response codes  200, 401, 403
-router.get("/:productId/image/:imageId");
+// @response codes  200, 401, 403, 404
+router.get("/:productId/image/:imageId", AuthMiddleware, controller.getProductImageById);
 
 // @route   DELETE /v1/product/{productId}/image/{imageId}
 // @desc    Hard Delete an image
