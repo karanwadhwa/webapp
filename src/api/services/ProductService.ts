@@ -73,6 +73,14 @@ class ProductService {
   findImageById = async (id: number): Promise<ImageModel> => {
     return ImageModel.findByPk(id);
   };
+
+  deleteImage = async (image_id: number): Promise<number> => {
+    try {
+      return await ImageModel.destroy({ where: { image_id } });
+    } catch (err) {
+      throw err;
+    }
+  };
 }
 
 export default ProductService;

@@ -103,7 +103,11 @@ router.get("/:productId/image/:imageId", AuthMiddleware, controller.getProductIm
 // @route   DELETE /v1/product/{productId}/image/{imageId}
 // @desc    Hard Delete an image
 // @access  Private
-// @response codes  200, 401, 404
-router.delete("/:productId/image/:imageId");
+// @response codes  204, 401, 403, 404
+router.delete(
+  "/:productId/image/:imageId",
+  AuthMiddleware,
+  controller.deleteProductImage
+);
 
 export default router;

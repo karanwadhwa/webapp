@@ -159,6 +159,33 @@ class ProductController extends RootController {
       return res.status(400).json({ err });
     }
   };
+
+  deleteProductImage = async (
+    req: AuthenticatedRequest,
+    res: Response
+  ): Promise<Response> => {
+    try {
+      const productId = parseInt(req.params.productId);
+      const imageId = parseInt(req.params.imageId);
+      const product = await productService.findById(productId);
+      if (!product) return res.status(404).json({ error: "Invalid product id" });
+      if (product.get("owner_user_id") !== req.user.id)
+        return res.status(403).json({ error: "You do not have access to this data" });
+
+      const imageData = await productService.findImageById(imageId);
+      if (!imageData) return res.status(404).json({ error: "Invalid image id" });
+      if (imageData.get("product_id") !== product.get("id"))
+        return res
+          .status(400)
+          .json({ error: "Image does not belong to the requested Product" });
+
+      await productService.deleteImage(imageId);
+      return res.sendStatus(204);
+    } catch (err) {
+      console.error(err);
+      return res.status(400).json({ err });
+    }
+  };
 }
 
 export default ProductController;
