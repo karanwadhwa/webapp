@@ -2,15 +2,27 @@ import {
   CreationOptional,
   DataTypes,
   ForeignKey,
+  HasManyAddAssociationMixin,
+  HasManyAddAssociationsMixin,
+  HasManyCountAssociationsMixin,
+  HasManyCreateAssociationMixin,
+  HasManyGetAssociationsMixin,
+  HasManyHasAssociationMixin,
+  HasManyHasAssociationsMixin,
+  HasManyRemoveAssociationMixin,
+  HasManyRemoveAssociationsMixin,
+  HasManySetAssociationsMixin,
   InferAttributes,
   InferCreationAttributes,
   Model,
+  NonAttribute,
 } from "sequelize";
+import ImageModel from "./ImageModel";
 import UserModel from "./UserModel";
 
 export default class ProductModel extends Model<
-  InferAttributes<ProductModel>,
-  InferCreationAttributes<ProductModel>
+  InferAttributes<ProductModel, { omit: "images" }>,
+  InferCreationAttributes<ProductModel, { omit: "images" }>
 > {
   // id can be undefined during creation when using `autoIncrement`
   declare id: CreationOptional<number>;
@@ -30,6 +42,24 @@ export default class ProductModel extends Model<
   // createdAt can be undefined during creation
   declare date_added: CreationOptional<Date>;
   declare date_last_updated: CreationOptional<Date>;
+
+  // Since TS cannot determine model association at compile time
+  // we have to declare them here purely virtually
+  // these will not exist until `Model.init` was called.
+  declare getImages: HasManyGetAssociationsMixin<ImageModel>; // Note the null assertions!
+  declare addImage: HasManyAddAssociationMixin<ImageModel, number>;
+  declare addImages: HasManyAddAssociationsMixin<ImageModel, number>;
+  declare setImages: HasManySetAssociationsMixin<ImageModel, number>;
+  declare removeImage: HasManyRemoveAssociationMixin<ImageModel, number>;
+  declare removeImages: HasManyRemoveAssociationsMixin<ImageModel, number>;
+  declare hasImage: HasManyHasAssociationMixin<ImageModel, number>;
+  declare hasImages: HasManyHasAssociationsMixin<ImageModel, number>;
+  declare countImages: HasManyCountAssociationsMixin;
+  declare createImage: HasManyCreateAssociationMixin<ImageModel, "product_id">;
+
+  // You can also pre-declare possible inclusions, these will only be populated if you
+  // actively include a relation.
+  declare images?: NonAttribute<ImageModel[]>; // Note this is optional since it's only populated when explicitly requested in code
 }
 
 export const attributes = {

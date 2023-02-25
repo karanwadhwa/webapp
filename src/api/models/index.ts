@@ -53,7 +53,7 @@ export async function initializeDatabase() {
     ProductModel.hasMany(ImageModel, {
       sourceKey: "id",
       foreignKey: "product_id",
-      as: "product_images", // this determines the name in `associations`!
+      as: "images", // this determines the name in `associations`!
     });
 
     return sequelize.sync({ alter: true });
