@@ -1,6 +1,7 @@
 import { Express, Request, Response } from "express";
 
 import { AuthenticatedRequest } from "../middlewares/AuthMiddleware";
+import { s3Delete, s3Upload } from "../middlewares/S3";
 import ImageModel from "../models/ImageModel";
 import ProductService from "../services/ProductService";
 import UserService from "../services/UserService";
@@ -95,16 +96,22 @@ class ProductController extends RootController {
 
   addProductImage = async (req: MulterRequest, res: Response): Promise<Response> => {
     try {
-      const file = req.file;
       const productId = parseInt(req.params.productId);
       const product = await productService.findById(productId);
+      const file = req.file;
       if (!product) return res.status(404).json({ error: "Invalid product id" });
       if (product.get("owner_user_id") !== req.user.id)
         return res.status(403).json({ error: "You do not have access to this data" });
+      if (!file || !file?.mimetype.includes("image"))
+        return res.status(400).json({ error: "Invalid file" });
+      if (!req.body.fileType || req.body.fileType !== file.mimetype)
+        return res.status(400).json({ error: "Invalid file type" });
 
+      const basePath = `user${req.user.id}/product${productId}/`;
+      const s3_response = await s3Upload(file, basePath);
       const imageData = await productService.saveImageData(product, {
         file_name: file.originalname,
-        s3_bucket_path: file.path,
+        s3_bucket_path: s3_response.Key,
       });
 
       return res.status(201).json({ ...imageData.toJSON() });
@@ -179,6 +186,8 @@ class ProductController extends RootController {
           .status(400)
           .json({ error: "Image does not belong to the requested Product" });
 
+      const s3_response = await s3Delete(imageData.s3_bucket_path);
+      console.log(s3_response);
       await productService.deleteImage(imageId);
       return res.sendStatus(204);
     } catch (err) {
