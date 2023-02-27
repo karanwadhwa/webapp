@@ -1,8 +1,8 @@
 import { Express, Request, Response } from "express";
+import fs from "fs";
 
 import { AuthenticatedRequest } from "../middlewares/AuthMiddleware";
-import { s3Delete, s3Upload } from "../middlewares/S3";
-import ImageModel from "../models/ImageModel";
+import { s3Delete, s3DeleteDir, s3Upload } from "../middlewares/S3";
 import ProductService from "../services/ProductService";
 import UserService from "../services/UserService";
 import RootController from "./RootController";
@@ -89,8 +89,9 @@ class ProductController extends RootController {
     if (product.owner_user_id !== req.user.id)
       return res.status(403).json({ error: "You do not have access to this data" });
 
-    const deleted = await productService.delete(productId);
-    console.log(deleted);
+    const images = await product.getImages();
+    if (images.length > 0) await s3DeleteDir(images);
+    await productService.delete(productId);
     return res.sendStatus(204);
   };
 
@@ -104,11 +105,10 @@ class ProductController extends RootController {
         return res.status(403).json({ error: "You do not have access to this data" });
       if (!file || !file?.mimetype.includes("image"))
         return res.status(400).json({ error: "Invalid file" });
-      if (!req.body.fileType || req.body.fileType !== file.mimetype)
-        return res.status(400).json({ error: "Invalid file type" });
 
       const basePath = `user${req.user.id}/product${productId}/`;
       const s3_response = await s3Upload(file, basePath);
+      fs.unlinkSync(file.path);
       const imageData = await productService.saveImageData(product, {
         file_name: file.originalname,
         s3_bucket_path: s3_response.Key,
