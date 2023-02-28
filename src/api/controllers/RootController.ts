@@ -1,12 +1,12 @@
 import express from "express";
 import { validationResult } from "express-validator";
-import { RequestUserAuth } from "../middlewares/AuthMiddleware";
+import { AuthenticatedRequest } from "../middlewares/AuthMiddleware";
 
 class RootController {
   constructor() {}
 
   checkValidationErrors = (
-    req: RequestUserAuth,
+    req: AuthenticatedRequest,
     res: express.Response,
     next: express.NextFunction
   ): express.Response => {

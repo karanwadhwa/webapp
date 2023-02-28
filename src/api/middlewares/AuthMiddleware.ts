@@ -4,7 +4,7 @@ import UserService from "../services/UserService";
 
 const userService = new UserService();
 
-export interface RequestUserAuth extends express.Request {
+export interface AuthenticatedRequest extends express.Request {
   user?: {
     id: number;
     username: string;
@@ -16,14 +16,16 @@ export interface RequestUserAuth extends express.Request {
 }
 
 export default async function (
-  req: RequestUserAuth,
+  req: AuthenticatedRequest,
   res: express.Response,
   next: express.NextFunction
 ) {
   const token = req.header("authorization");
 
   if (!token) {
-    return res.status(401).json({ error: "Authentication required to access this route" });
+    return res
+      .status(401)
+      .json({ error: "Authentication required to access this route" });
   }
 
   try {

@@ -1,11 +1,18 @@
 import { Model, Sequelize } from "sequelize";
 import mysql from "mysql2";
 import dotenv from "dotenv";
-import UserModel, { attributes as userAttributes, options as userOptions } from "./UserModel";
+import UserModel, {
+  attributes as userAttributes,
+  options as userOptions,
+} from "./UserModel";
 import ProductModel, {
   attributes as productAttributes,
   options as productOptions,
 } from "./ProductModel";
+import ImageModel, {
+  attributes as imageAttributes,
+  options as imageOptions,
+} from "./ImageModel";
 dotenv.config();
 
 const DB_DATABASE = process.env.DB_DATABASE;
@@ -34,12 +41,19 @@ export async function initializeDatabase() {
 
     UserModel.init(userAttributes, { ...userOptions, sequelize });
     ProductModel.init(productAttributes, { ...productOptions, sequelize });
+    ImageModel.init(imageAttributes, { ...imageOptions, sequelize });
 
     // Here we associate which actually populates out pre-declared `association` static and other methods.
     UserModel.hasMany(ProductModel, {
       sourceKey: "id",
       foreignKey: "owner_user_id",
       as: "products", // this determines the name in `associations`!
+    });
+
+    ProductModel.hasMany(ImageModel, {
+      sourceKey: "id",
+      foreignKey: "product_id",
+      as: "images", // this determines the name in `associations`!
     });
 
     return sequelize.sync({ alter: true });
