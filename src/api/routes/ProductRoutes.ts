@@ -6,7 +6,7 @@ import AuthMiddleware from "../middlewares/AuthMiddleware";
 
 const router = express.Router();
 const controller = new ProductController();
-const upload = multer({ dest: process.env.MULTER_UPLOADS_DIR });
+const upload = multer({ dest: __dirname + "/uploads/" });
 
 // @route   POST /v1/product/
 // @desc    Create new product

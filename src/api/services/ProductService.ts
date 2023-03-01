@@ -56,6 +56,7 @@ class ProductService {
 
   delete = async (id: number): Promise<number> => {
     const affectedCount = await ProductModel.destroy({ where: { id } });
+    const deletedImages = await ImageModel.destroy({ where: { product_id: id } });
     return affectedCount;
   };
 
