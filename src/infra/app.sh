@@ -12,10 +12,10 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 nvm install 16 -y
 
 # # install mysql
-sudo yum install https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm -y
-sudo yum repolist
-sudo amazon-linux-extras install epel -y
-sudo yum -y install mysql-community-server
+# sudo yum install https://dev.mysql.com/get/mysql80-community-release-el7-5.noarch.rpm -y
+# sudo yum repolist
+# sudo amazon-linux-extras install epel -y
+# sudo yum -y install mysql
 # sudo systemctl enable --now mysqld
 # systemctl status mysqld
 # # sudo grep 'temporary password' /var/log/mysqld.log | awk '{print $NF;}'
