@@ -1,6 +1,8 @@
 import { Model, Sequelize } from "sequelize";
 import mysql from "mysql2";
 import dotenv from "dotenv";
+import winston from "winston";
+
 import UserModel, {
   attributes as userAttributes,
   options as userOptions,
@@ -26,6 +28,23 @@ const dbConfig = {
   password: process.env.DB_PASSWORD,
 };
 
+const { combine, timestamp, label, printf, colorize } = winston.format;
+const format = printf(({ level, message, label, timestamp }) => {
+  return `${timestamp} [${label}] [${level}]: ${message}`;
+});
+const logger = winston.createLogger({
+  level: "info",
+  format: combine(
+    colorize(),
+    label({ label: "Sequelize" }),
+    timestamp({
+      format: "YYYY-MM-DD hh:mm:ss.SSS A",
+    }),
+    format
+  ),
+  transports: [new winston.transports.Console()],
+});
+
 export async function initializeDatabase() {
   // Create Database if it doesnt already exist
   const connection = mysql.createConnection(dbConfig);
@@ -37,6 +56,7 @@ export async function initializeDatabase() {
     const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
       host: DB_HOST,
       dialect: "mysql",
+      logging: (message: String): winston.Logger => logger.info(message),
     });
 
     UserModel.init(userAttributes, { ...userOptions, sequelize });
