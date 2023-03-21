@@ -2,11 +2,13 @@
 import express, { Application, Request, Response } from "express";
 import winston from "winston";
 import morgan from "morgan";
+import statsD from "node-statsd";
 
 import UserRouter from "./routes/UserRoutes";
 import ProductRouter from "./routes/ProductRoutes";
 
 const app: Application = express();
+const statsdClient: statsD = new statsD();
 
 const { combine, timestamp, json } = winston.format;
 const logger = winston.createLogger({
@@ -27,9 +29,15 @@ const morganMiddleware = morgan(
   }
 );
 
+const statsDMiddleware = (req, res, next) => {
+  statsdClient.increment(`${req.method} ${req.url}`);
+  next();
+};
+
 // Middleware
 app.use(express.json());
 app.use(morganMiddleware);
+app.use(statsDMiddleware);
 
 // Health check endpoint
 app.get("/healthz", (req: Request, res: Response) => {
