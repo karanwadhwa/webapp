@@ -5,6 +5,8 @@ import { AuthenticatedRequest } from "../middlewares/AuthMiddleware";
 import { s3Delete, s3DeleteDir, s3Upload } from "../middlewares/S3";
 import ProductService from "../services/ProductService";
 import UserService from "../services/UserService";
+import { getCommonURLIdentifier } from "../utils/common";
+import logger from "../utils/logger";
 import RootController from "./RootController";
 
 const userService = new UserService();
@@ -41,7 +43,9 @@ class ProductController extends RootController {
 
       return res.status(201).json({ ...product.toJSON() });
     } catch (error) {
-      console.log(error);
+      const routeIdentifier = getCommonURLIdentifier(req);
+      logger().error(error);
+
       if (error.errors) return res.status(400).json({ errors: error.errors });
       else return res.sendStatus(400);
     }
@@ -73,10 +77,9 @@ class ProductController extends RootController {
       }
 
       const updated = await productService.update(req.body, productId);
-      console.log(updated);
       return res.sendStatus(204);
     } catch (error) {
-      console.log(error);
+      logger().error(error);
       if (error.errors) return res.status(400).json({ errors: error.errors });
       else return res.sendStatus(400);
     }
@@ -116,7 +119,7 @@ class ProductController extends RootController {
 
       return res.status(201).json({ ...imageData.toJSON() });
     } catch (err) {
-      console.error(err);
+      logger().error(err);
       return res.status(400).json({ err });
     }
   };
@@ -136,7 +139,7 @@ class ProductController extends RootController {
 
       return res.status(200).send(images);
     } catch (err) {
-      console.error(err);
+      logger().error(err);
       return res.status(400).json({ err });
     }
   };
@@ -162,7 +165,7 @@ class ProductController extends RootController {
 
       return res.status(200).json({ ...imageData.toJSON() });
     } catch (err) {
-      console.error(err);
+      logger().error(err);
       return res.status(400).json({ err });
     }
   };
@@ -187,11 +190,10 @@ class ProductController extends RootController {
           .json({ error: "Image does not belong to the requested Product" });
 
       const s3_response = await s3Delete(imageData.s3_bucket_path);
-      console.log(s3_response);
       await productService.deleteImage(imageId);
       return res.sendStatus(204);
     } catch (err) {
-      console.error(err);
+      logger().error(err);
       return res.status(400).json({ err });
     }
   };

@@ -15,6 +15,7 @@ import ImageModel, {
   attributes as imageAttributes,
   options as imageOptions,
 } from "./ImageModel";
+import logger from "../utils/logger";
 dotenv.config();
 
 const DB_DATABASE = process.env.DB_DATABASE;
@@ -28,35 +29,19 @@ const dbConfig = {
   password: process.env.DB_PASSWORD,
 };
 
-const { combine, timestamp, label, printf, colorize } = winston.format;
-const format = printf(({ level, message, label, timestamp }) => {
-  return `${timestamp} [${label}] [${level}]: ${message}`;
-});
-const logger = winston.createLogger({
-  level: "info",
-  format: combine(
-    colorize(),
-    label({ label: "Sequelize" }),
-    timestamp({
-      format: "YYYY-MM-DD hh:mm:ss.SSS A",
-    }),
-    format
-  ),
-  transports: [new winston.transports.Console()],
-});
-
 export async function initializeDatabase() {
   // Create Database if it doesnt already exist
   const connection = mysql.createConnection(dbConfig);
   connection.query(`CREATE DATABASE IF NOT EXISTS \`${DB_DATABASE}\`;`, (err, result) => {
     if (err) throw err;
-    console.log("database created", result);
+    logger().log("info", "database created", result);
 
     // initialize db connection with sequelize
     const sequelize = new Sequelize(DB_DATABASE, DB_USER, DB_PASSWORD, {
       host: DB_HOST,
       dialect: "mysql",
-      logging: (message: String): winston.Logger => logger.info(message),
+      logging: (message: String): winston.Logger =>
+        logger({ label: "Sequelize" }).info(message),
     });
 
     UserModel.init(userAttributes, { ...userOptions, sequelize });

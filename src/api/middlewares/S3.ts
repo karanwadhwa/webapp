@@ -1,6 +1,7 @@
 import S3 from "aws-sdk/clients/s3";
 import fs from "fs";
 import ImageModel from "../models/ImageModel";
+import logger from "../utils/logger";
 
 export const s3Upload = async (
   file: Express.Multer.File,
@@ -29,8 +30,8 @@ export const s3DeleteDir = async (imgObjects: ImageModel[]) => {
       Delete: { Objects },
     },
     (err, data) => {
-      if (err) console.log("s3 deleteobjects err", err);
-      if (data) console.log("s3 deleteobjects data", data);
+      if (err) logger().error(err);
+      if (data) logger().info(data);
     }
   );
 };
