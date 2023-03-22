@@ -3,6 +3,7 @@ import multer from "multer";
 import { check } from "express-validator";
 import ProductController from "../controllers/ProductController";
 import AuthMiddleware from "../middlewares/AuthMiddleware";
+import StatsDMiddleware from "../middlewares/StatsDMiddleware";
 
 const router = express.Router();
 const controller = new ProductController();
@@ -31,7 +32,7 @@ router.post(
 // @desc    Get product details
 // @access  Public
 // @response codes  200, 404
-router.get("/:productId", controller.getProduct);
+router.get("/:productId", StatsDMiddleware, controller.getProduct);
 
 // @route   PUT /v1/product/:productId
 // @desc    Update product

@@ -99,6 +99,16 @@ build {
     destination = "/home/ec2-user/webapp.zip"
   }
 
+  provisioner "file" {
+    source      = "./cloudwatch-config.json"
+    destination = "/tmp/cloudwatch-config.json"
+  }
+
+  provisioner "file" {
+    source      = "./csye6225.conf"
+    destination = "/tmp/csye6225.conf"
+  }
+
 
   provisioner "shell" {
     environment_vars = [

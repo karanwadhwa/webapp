@@ -1,6 +1,8 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import UserService from "../services/UserService";
+import StatsDMiddleware from "./StatsDMiddleware";
+import logger from "../utils/logger";
 
 const userService = new UserService();
 
@@ -20,6 +22,7 @@ export default async function (
   res: express.Response,
   next: express.NextFunction
 ) {
+  StatsDMiddleware(req);
   const token = req.header("authorization");
 
   if (!token) {
@@ -41,7 +44,7 @@ export default async function (
       next();
     } else return res.status(401).json({ error: "Invalid credentials" });
   } catch (err) {
-    console.log(err);
+    logger().error(err);
     return res.status(401).json({ error: "Invalid authentication token" });
   }
 }

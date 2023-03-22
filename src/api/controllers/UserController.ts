@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/AuthMiddleware";
 import UserService from "../services/UserService";
+import logger from "../utils/logger";
 import RootController from "./RootController";
 
 const userService = new UserService();
@@ -36,7 +37,6 @@ class UserController extends RootController {
       return res.status(400).json({ error: "Incorrect username" });
 
     const updatedUser = userService.updateUser(req.body, parseInt(req.params.userId));
-    console.log(updatedUser);
     return res.sendStatus(204);
   };
 }
