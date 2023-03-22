@@ -2,6 +2,7 @@ import * as express from "express";
 import { check } from "express-validator";
 import UserController from "../controllers/UserController";
 import AuthMiddleware from "../middlewares/AuthMiddleware";
+import StatsDMiddleware from "../middlewares/StatsDMiddleware";
 
 const router = express.Router();
 const controller = new UserController();
@@ -19,6 +20,7 @@ const controller = new UserController();
 // @response codes  201, 400
 router.post(
   "/",
+  StatsDMiddleware,
   check("first_name", "first_name is a required field").not().isEmpty(),
   check("last_name", "last_name is a required field").not().isEmpty(),
   check("username", "username should be a valid email address").isEmail(),

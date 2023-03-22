@@ -1,46 +1,29 @@
 // import dotenv from "dotenv";
 import express, { Application, Request, Response } from "express";
-import winston from "winston";
 import morgan from "morgan";
-import statsD from "node-statsd";
+import winston from "winston";
 
 import UserRouter from "./routes/UserRoutes";
 import ProductRouter from "./routes/ProductRoutes";
+import logger from "./utils/logger";
+import StatsDMiddleware from "./middlewares/StatsDMiddleware";
 
 const app: Application = express();
-const statsdClient: statsD = new statsD();
-
-const { combine, timestamp, json } = winston.format;
-const logger = winston.createLogger({
-  level: "http",
-  format: combine(
-    timestamp({
-      format: "YYYY-MM-DD hh:mm:ss.SSS A",
-    }),
-    json()
-  ),
-  transports: [new winston.transports.Console()],
-});
 
 const morganMiddleware = morgan(
   ":method :url :status :res[content-length] - :response-time ms",
   {
-    write: (message: String): winston.Logger => logger.http(message.trim()),
+    write: (message: String): winston.Logger =>
+      logger({ label: "Express" }).http(message.trim()),
   }
 );
-
-const statsDMiddleware = (req, res, next) => {
-  statsdClient.increment(`${req.method} ${req.url}`);
-  next();
-};
 
 // Middleware
 app.use(express.json());
 app.use(morganMiddleware);
-app.use(statsDMiddleware);
 
 // Health check endpoint
-app.get("/healthz", (req: Request, res: Response) => {
+app.get("/healthz", StatsDMiddleware, (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
