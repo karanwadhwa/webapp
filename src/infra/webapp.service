@@ -3,7 +3,7 @@ Description=CSYE 6225 webapp
 After=multi-user.target
 
 [Service]
-ExecStart=/home/ec2-user/.nvm/versions/node/v16.19.1/bin/node /home/ec2-user/webapp/dist/index.js
+ExecStart=/usr/bin/node /home/ec2-user/webapp/dist/index.js
 Restart=always
 RestartSec=10
 StandardOutput=syslog

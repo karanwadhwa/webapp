@@ -7,9 +7,10 @@ sleep 30
 sudo yum upgrade -y
 
 # install node
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-. ~/.nvm/nvm.sh
-nvm install 16 -y
+sudo yum install -y gcc-c++ make
+curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
+sudo yum install -y nodejs
+node -v
 
 # copy and unzip repo
 sudo yum install unzip -y
