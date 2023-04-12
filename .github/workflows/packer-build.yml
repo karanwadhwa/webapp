@@ -16,6 +16,9 @@ jobs:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
+    outputs:
+      ami_id: ${{ steps.updating.outputs.ami }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -77,6 +80,8 @@ jobs:
         id: updating
         run: |
           echo "Deploying Packer Build"
+          ls -la
+          cat manifest.json
           AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
           echo "$AMI_ID"
           echo "ami=$AMI_ID" >> "$GITHUB_OUTPUT"
