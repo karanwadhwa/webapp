@@ -80,6 +80,7 @@ jobs:
         id: updating
         run: |
           echo "Deploying Packer Build"
+          cd src/infra/
           ls -la
           cat manifest.json
           AMI_ID=$(jq -r '.builds[-1].artifact_id' manifest.json | cut -d ":" -f2)
