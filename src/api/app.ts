@@ -27,7 +27,7 @@ app.get("/healthz", StatsDMiddleware, (req: Request, res: Response) => {
   res.sendStatus(200);
 });
 
-app.use("/v1/user", UserRouter);
-app.use("/v1/product", ProductRouter);
+app.use("/v2/user", UserRouter);
+app.use("/v2/product", ProductRouter);
 
 export default app;
